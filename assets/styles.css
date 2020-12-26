@@ -234,6 +234,7 @@ footer a{
       margin-right: 10px;
       display: flex;
       justify-content: center;
+      align-items:center;
    }
 
    .post-buttons p{
@@ -250,6 +251,10 @@ footer a{
 @media(max-width: 700px){
    .container{
       margin-top: 15px;
+   }
+
+   .footer{
+      margin-top: 110px;
    }
 
    footer{

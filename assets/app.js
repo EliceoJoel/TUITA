@@ -1,13 +1,19 @@
 
+//Variables
 var thefile;
 var imageSRC;
+var myEdit = '';
+var copyPostButton;
 
 const inputFile = document.getElementById('myfile');
 const postButton = document.querySelector(".post-button");
 const postText = document.querySelector(".text-area");
 const postButtons = document.querySelector(".post-buttons");
 const deleteImageButoon = document.querySelector(".delete-file");
+const publications = document.querySelector(".publications-area");
 
+
+//file uppload event
 inputFile.onchange = (e)=>{
    if(thefile){
       alert("Only one image");
@@ -45,15 +51,35 @@ inputFile.onchange = (e)=>{
    }
 }
 
+//event listeners
+eventListeners();
+function eventListeners(){
+   //add new publication
+   postButton.addEventListener('click', (e)=>{
+      if(postButton.classList[1] !== "edit"){
+         if(thefile != undefined && postText.value != ""){
+            handlePublications();
+         }else{
+            alert("Complete the text and image fields")
+         }
+      }else{
+         changeTextOfPublication();
+      }
+   });
+   
+   //delete publication
+   publications.addEventListener('click', deletePublication);
 
-postButton.addEventListener('click', (e)=>{
-   if(thefile != undefined && postText.value != ""){
-      handlePublications();
-   }else{
-      alert("Complete the text and image fields")
-   }
-})
+   //edit publication
+   publications.addEventListener('click', editPublication);
+}
 
+
+
+
+//functions
+
+//new publication
 function handlePublications() {
    const pArea = document.querySelector(".publications-area");
    let textPosted = postText.value;
@@ -66,15 +92,43 @@ function handlePublications() {
                     <i class="fas fa-ellipsis-h"></i>
                   </button>
                   <div class="dropdown-content">
-                    <a href="#">Edit</a>
-                    <a href="#">Delete</a>
+                    <a href="#" class="edit-publication">Edit</a>
+                    <a href="#" class="delete-publication">Delete</a>
                   </div>
                 </div>
               </div>
               <img src="${imageSRC}" alt="${textPosted}" />
             </div>
    `
+   //clear fields
    postText.value = "";
    thefile = undefined;
    document.querySelector('.image-file').remove();
- }
+}
+
+//delete publication
+function deletePublication(e){
+   e.preventDefault();
+   if(e.target.className === "delete-publication"){
+      e.target.parentElement.parentElement.parentElement.parentElement.remove();
+   }
+}
+
+function editPublication(e){
+   e.preventDefault();
+   if(e.target.className === "edit-publication"){
+      let textPublication = e.target.parentElement.parentElement
+      .previousElementSibling;
+      myEdit = textPublication;
+      postButton.classList.add("edit");
+      postText.value = textPublication.textContent;
+      postButton.innerHTML = `<i class="fas fa-save"></i>Save`;
+   }
+}
+
+function changeTextOfPublication(e){
+   myEdit.innerText = postText.value;
+   postText.value = "";
+   postButton.innerHTML = `<i class="fas fa-paper-plane"></i>Post`
+   postButton.classList.remove("edit")
+}
