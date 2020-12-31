@@ -1,5 +1,5 @@
 
-//Variables
+/******************************** VARIABLES ********************************/
 var thefile;
 var imageSRC;
 var myEdit = '';
@@ -13,7 +13,7 @@ const deleteImageButoon = document.querySelector(".delete-file");
 const publications = document.querySelector(".publications-area");
 
 
-//file uppload event
+/****************************** INPUT FILE EVENT ***************************/
 inputFile.onchange = (e)=>{
    if(thefile){
       alert("Only one image");
@@ -51,14 +51,15 @@ inputFile.onchange = (e)=>{
    }
 }
 
-//event listeners
+/***************************** EVENT LISTENERS ****************************/
 eventListeners();
+
 function eventListeners(){
    //add new publication
    postButton.addEventListener('click', (e)=>{
       if(postButton.classList[1] !== "edit"){
          if(thefile != undefined && postText.value != ""){
-            handlePublications();
+            handlePublications(postText.value, imageSRC);
          }else{
             alert("Complete the text and image fields")
          }
@@ -72,38 +73,88 @@ function eventListeners(){
 
    //edit publication
    publications.addEventListener('click', editPublication);
+
+   //Load content in local Storage
+   document.addEventListener('DOMContentLoaded', obtainPosts);
 }
 
 
 
 
-//functions
+/********************************* FUNCTIONS *********************************/
 
 //new publication
-function handlePublications() {
+function handlePublications(text, src) {
    const pArea = document.querySelector(".publications-area");
-   let textPosted = postText.value;
    pArea.innerHTML += `
-            <div class="publication">
-              <div class="text-area-posted">
-                <p class="posted-text">${textPosted}</p>
-                <div class="dropdown">
-                  <button class="dropbtn">
-                    <i class="fas fa-ellipsis-h"></i>
-                  </button>
-                  <div class="dropdown-content">
-                    <a href="#" class="edit-publication">Edit</a>
-                    <a href="#" class="delete-publication">Delete</a>
-                  </div>
-                </div>
-              </div>
-              <img src="${imageSRC}" alt="${textPosted}" />
+      <div class="publication">
+        <div class="text-area-posted">
+          <p class="posted-text">${text}</p>
+          <div class="dropdown">
+            <button class="dropbtn">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="dropdown-content">
+              <a href="#" class="edit-publication">Edit</a>
+              <a href="#" class="delete-publication">Delete</a>
             </div>
-   `
+          </div>
+        </div>
+        <img src="${src}" alt="${text}" />
+      </div>`
+
+   //Add publication to locas storage
+   addPostLocalStorage(text, src);
+
    //clear fields
    postText.value = "";
    thefile = undefined;
    document.querySelector('.image-file').remove();
+}
+
+function addPostLocalStorage(text, src){
+   let posts;
+   posts = obtainPostLocalStorage();
+   //add new post to posts in local storage
+   posts.push({text: text, src: src})
+   console.log(JSON.stringify(posts));
+   localStorage.setItem('posts', JSON.stringify(posts));
+}
+
+//check if exists anyone post
+function obtainPostLocalStorage(){
+   let posts;
+   if(localStorage.getItem('posts') === null){
+      posts = [];
+   }else{
+      posts = JSON.parse(localStorage.getItem('posts'));
+   }
+   return posts;
+}
+
+//obtain posts of local storage and load in DOM these
+function obtainPosts(){
+   let posts;
+   posts = obtainPostLocalStorage();
+   const pArea = document.querySelector(".publications-area");
+   posts.forEach(post => {
+      pArea.innerHTML += `
+         <div class="publication">
+           <div class="text-area-posted">
+             <p class="posted-text">${post.text}</p>
+             <div class="dropdown">
+               <button class="dropbtn">
+                 <i class="fas fa-ellipsis-h"></i>
+               </button>
+               <div class="dropdown-content">
+                 <a href="#" class="edit-publication">Edit</a>
+                 <a href="#" class="delete-publication">Delete</a>
+               </div>
+             </div>
+           </div>
+           <img src="${post.src}" alt="${post.text}" />
+         </div>`
+   });
 }
 
 //delete publication
