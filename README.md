@@ -2,6 +2,9 @@
 
 TUITA is a twiter clone web page, but this is a simple page, where you can pusblish posts with images and text en local storage.
 
+## Web page
+[https://tuita.netlify.app/](https://tuita.netlify.app/) 
+
 ## Installation
 
 open index.html
