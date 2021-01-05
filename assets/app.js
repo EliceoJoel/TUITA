@@ -161,13 +161,25 @@ function obtainPosts(){
 function deletePublication(e){
    e.preventDefault();
    if(e.target.className === "delete-publication"){
-      e.target.parentElement.parentElement.parentElement.parentElement.remove();
+      let elem = e.target.parentElement.parentElement.parentElement;
+
+      //delete of localStorage
+      let publicationText = elem.firstElementChild.textContent;
+      let newLocalStorage = obtainPostLocalStorage().filter((elem)=>{
+         return elem.text != publicationText;
+      });
+      localStorage.clear();
+      localStorage.setItem("posts", JSON.stringify(newLocalStorage));
+
+      //delete of DOM
+      elem.parentElement.remove();
    }
 }
 
 function editPublication(e){
    e.preventDefault();
    if(e.target.className === "edit-publication"){
+      postText.focus();
       let textPublication = e.target.parentElement.parentElement
       .previousElementSibling;
       myEdit = textPublication;
@@ -178,6 +190,17 @@ function editPublication(e){
 }
 
 function changeTextOfPublication(e){
+   //Update in Local Storage
+   let posts = obtainPostLocalStorage();
+   posts.forEach(elem=>{
+      if(elem.text === myEdit.textContent){
+         elem.text = postText.value;
+      }
+   });
+   localStorage.clear();
+   localStorage.setItem("posts", JSON.stringify(posts));
+
+   //Update in DOM
    myEdit.innerText = postText.value;
    postText.value = "";
    postButton.innerHTML = `<i class="fas fa-paper-plane"></i>Post`
