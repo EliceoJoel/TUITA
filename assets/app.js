@@ -18,6 +18,7 @@ inputFile.onchange = (e)=>{
    if(thefile){
       alert("Only one image");
    }else{
+      console.log("entro");
       thefile = e.target.files;
       const divImg = document.createElement('div');
       divImg.className = "image-file";
@@ -33,6 +34,7 @@ inputFile.onchange = (e)=>{
       postButtons.appendChild(divImg);
 
       deleteFile.addEventListener('click', (e)=>{
+         inputFile.value = ''
          thefile = undefined;
          divImg.remove();
       });
@@ -58,7 +60,8 @@ function eventListeners(){
    //add new publication
    postButton.addEventListener('click', (e)=>{
       if(postButton.classList[1] !== "edit"){
-         if(thefile != undefined && postText.value != ""){
+         console.log(thefile, postText.value)
+         if(thefile !== undefined && postText.value !== ""){
             handlePublications(postText.value, imageSRC);
          }else{
             alert("Complete the text and image fields")
@@ -117,7 +120,6 @@ function addPostLocalStorage(text, src){
    posts = obtainPostLocalStorage();
    //add new post to posts in local storage
    posts.push({text: text, src: src})
-   console.log(JSON.stringify(posts));
    localStorage.setItem('posts', JSON.stringify(posts));
 }
 
